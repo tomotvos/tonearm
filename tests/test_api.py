@@ -13,6 +13,8 @@ async def api(aiohttp_client, make_service, tmp_path):
     web_dir.mkdir()
     (web_dir / "index.html").write_text("<h1>tonearm</h1>")
     (web_dir / "app.js").write_text("console.log('hi')")
+    (web_dir / "favicon.ico").write_bytes(b"\x00\x00\x01\x00ico")
+    (web_dir / "apple-touch-icon.png").write_bytes(b"\x89PNGtouch")
     svc, client, pipe, clock = make_service()
     return await aiohttp_client(create_app(svc, web_dir)), svc, client
 
@@ -186,6 +188,18 @@ async def test_index_and_static_are_served(api):
     http, svc, client = api
     assert "tonearm" in await (await http.get("/")).text()
     assert "console.log" in await (await http.get("/static/app.js")).text()
+
+
+async def test_icons_are_served_at_the_root(api):
+    http, svc, client = api
+    ico = await http.get("/favicon.ico")
+    assert ico.status == 200
+    assert ico.headers["Content-Type"] == "image/x-icon"
+    assert await ico.read() == b"\x00\x00\x01\x00ico"
+    for path in ("/apple-touch-icon.png", "/apple-touch-icon-precomposed.png"):
+        touch = await http.get(path)
+        assert touch.status == 200
+        assert await touch.read() == b"\x89PNGtouch"
 
 
 async def read_event(resp):

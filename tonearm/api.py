@@ -126,8 +126,17 @@ def create_app(service, web_dir: Path) -> web.Application:
     async def index(request):
         return web.FileResponse(web_dir / "index.html")
 
+    async def favicon(request):
+        return web.FileResponse(web_dir / "favicon.ico", headers={"Content-Type": "image/x-icon"})
+
+    async def touch_icon(request):
+        return web.FileResponse(web_dir / "apple-touch-icon.png")
+
     app = web.Application()
     app.router.add_get("/", index)
+    app.router.add_get("/favicon.ico", favicon)
+    app.router.add_get("/apple-touch-icon.png", touch_icon)
+    app.router.add_get("/apple-touch-icon-precomposed.png", touch_icon)
     app.router.add_get("/api/status", status)
     app.router.add_get("/api/events", events)
     app.router.add_post("/api/play", play)
