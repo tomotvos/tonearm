@@ -333,7 +333,7 @@ let speakersSection, speakersHeadEl, speakersCountEl, speakersNoticeEl;
 
 function buildSpeakersSkeleton() {
   speakersCountEl = el("span");
-  speakersHeadEl = el("div", { class: "speakers-head" }, el("h2", { text: "This week's line-up" }), speakersCountEl);
+  speakersHeadEl = el("div", { class: "speakers-head" }, el("h2", { text: "The Line-up" }), speakersCountEl);
   speakersSection = el("section", { class: "speakers", "aria-label": "Speakers" }, speakersHeadEl);
   return speakersSection;
 }

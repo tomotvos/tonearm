@@ -256,7 +256,7 @@ header.brand {
 
 .speakers { display: grid; gap: 10px; }
 .speakers-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-inline: 4px; }
-.speakers-head h2 { margin: 0; font-family: var(--display); font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.2em; }
+.speakers-head h2 { margin: 0; white-space: nowrap; font-family: var(--display); font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.2em; }
 .speakers-head span { font-size: 13px; color: var(--muted); text-align: right; }
 
 .spk {
