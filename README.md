@@ -160,6 +160,8 @@ The UI is plain HTML, CSS and JavaScript in `web/`, with no build step.
 
 Inspired by [Pinyl](https://github.com/marktiddy/Pinyl). All audio output is handled by [OwnTone](https://github.com/owntone/owntone-server).
 
+The UI bundles the Yellowtail (Apache License 2.0), Oswald and Karla (SIL Open Font License) typefaces; their licences are in `web/fonts/`.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).

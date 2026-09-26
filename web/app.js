@@ -91,7 +91,7 @@ function describe(s) {
   if (s.state === "playing") {
     const playingTo = s.speakers.filter(x => x.selected).map(x => x.id);
     const to = names(playingTo);
-    return { lamp: "on", eyebrow: "Needle down", body: to ? `On ${to}.` : "" };
+    return { lamp: "on", eyebrow: "Now spinning", body: to ? `On ${to}.` : "" };
   }
   if (s.state === "held") {
     return { lamp: "", eyebrow: "Stopped by you", body: "Auto-on comes back after the tonearm lifts. Press Play to resume now." };
@@ -241,19 +241,21 @@ function createSpeakerCard(id) {
   vol.addEventListener("pointercancel", endDrag);
   vol.addEventListener("blur", endDrag);
 
+  const rank = el("span", { class: "rank", "aria-hidden": "true" });
   const nameB = el("b");
   const nameSmall = el("small");
   const pinContainer = el("div");
 
   const card = el("article", { class: "spk" },
     el("div", { class: "spk-top" },
+      rank,
       el("div", { class: "spk-name" }, nameB, nameSmall),
       star,
       el("span", { class: "switch" }, toggle, el("span"))),
     el("div", { class: "vol" }, vol, out),
     pinContainer);
 
-  const nodes = { card, toggle, star, vol, out, nameB, nameSmall, pinContainer, pinForm: null };
+  const nodes = { card, toggle, star, vol, out, rank, nameB, nameSmall, pinContainer, pinForm: null };
   speakerNodes.set(id, nodes);
   return nodes;
 }
@@ -331,7 +333,7 @@ let speakersSection, speakersHeadEl, speakersCountEl, speakersNoticeEl;
 
 function buildSpeakersSkeleton() {
   speakersCountEl = el("span");
-  speakersHeadEl = el("div", { class: "speakers-head" }, el("h2", { text: "Speakers" }), speakersCountEl);
+  speakersHeadEl = el("div", { class: "speakers-head" }, el("h2", { text: "This week's line-up" }), speakersCountEl);
   speakersSection = el("section", { class: "speakers", "aria-label": "Speakers" }, speakersHeadEl);
   return speakersSection;
 }
@@ -384,9 +386,12 @@ function updateSpeakers(s) {
 
   const byId = new Map(s.speakers.map(sp => [sp.id, sp]));
   let prevNode = speakersHeadEl;
-  for (const id of speakerOrder) {
+  for (const [i, id] of speakerOrder.entries()) {
     const sp = byId.get(id);
     const cardEl = updateSpeakerCard(sp);
+    const rankText = `#${i + 1}`;
+    const rankEl = speakerNodes.get(id).rank;
+    if (rankEl.textContent !== rankText) rankEl.textContent = rankText;
     positionAfter(speakersSection, cardEl, prevNode);
     prevNode = cardEl;
   }
@@ -579,7 +584,11 @@ function buildSkeleton() {
     "aria-label": "Settings", title: "Settings",
   });
   gearBtn.innerHTML = GEAR_ICON;
-  const header = el("header", { class: "brand" }, el("div", { class: "wordmark", text: "TONEARM" }), gearBtn);
+  const header = el("header", { class: "brand" },
+    el("div", { class: "wordmark" },
+      el("span", { class: "name", text: "Tonearm" }),
+      el("span", { class: "tagline", text: "★ Top of the pops, every room ★" })),
+    gearBtn);
 
   deckEl = buildDeckSkeleton();
   const speakers = buildSpeakersSkeleton();
