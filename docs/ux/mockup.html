@@ -1,0 +1,613 @@
+<title>Tonearm Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --ground: #eceef0;
+  --panel: #f8f9fa;
+  --ink: #1a1e23;
+  --muted: #5e6772;
+  --line: #cdd2d8;
+  --track: #dde1e5;
+  --accent: #c98612;
+  --accent-ink: #1a1e23;
+  --accent-soft: #f6e7c8;
+  --ok: #2f7d55;
+  --danger: #b73a28;
+  --danger-soft: #f7e0db;
+  --warn-soft: #efe6d6;
+  --focus: #2c6bd6;
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ground: #121519;
+    --panel: #1b1f24;
+    --ink: #e7eaee;
+    --muted: #97a0ab;
+    --line: #2e343b;
+    --track: #2a3037;
+    --accent: #f0b03a;
+    --accent-ink: #15181c;
+    --accent-soft: #3a2f18;
+    --ok: #5cc28c;
+    --danger: #f07a66;
+    --danger-soft: #3b211d;
+    --warn-soft: #2f2a20;
+    --focus: #7aa7ff;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground: #121519;
+  --panel: #1b1f24;
+  --ink: #e7eaee;
+  --muted: #97a0ab;
+  --line: #2e343b;
+  --track: #2a3037;
+  --accent: #f0b03a;
+  --accent-ink: #15181c;
+  --accent-soft: #3a2f18;
+  --ok: #5cc28c;
+  --danger: #f07a66;
+  --danger-soft: #3b211d;
+  --warn-soft: #2f2a20;
+  --focus: #7aa7ff;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: 16px;
+  line-height: 1.45;
+  padding-inline: 16px;
+  padding-block: 12px 40px;
+}
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+.mock-bar {
+  max-width: 560px;
+  margin: 0 auto 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  font-size: 13px;
+  color: var(--muted);
+}
+.mock-bar strong {
+  font-stretch: 112%;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 11px;
+  margin-right: 4px;
+}
+.mock-bar button {
+  border: 1px dashed var(--line);
+  background: transparent;
+  border-radius: 999px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.mock-bar button[aria-pressed="true"] { border-style: solid; border-color: var(--ink); color: var(--ink); }
+
+.app {
+  max-width: 560px;
+  margin: 0 auto;
+  display: grid;
+  gap: 16px;
+}
+
+header.brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.wordmark {
+  font-stretch: 125%;
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 0.02em;
+}
+.icon-btn {
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  border-radius: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding-inline: 12px;
+  font-size: 14px;
+}
+
+.icon-btn.gear { padding-inline: 0; width: 44px; color: var(--muted); }
+.icon-btn.gear svg { width: 22px; height: 22px; fill: currentColor; }
+.icon-btn.gear:hover { color: var(--ink); }
+
+.banner {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--danger-soft);
+  color: var(--ink);
+  border: 1px solid color-mix(in srgb, var(--danger) 35%, transparent);
+  font-size: 15px;
+}
+.banner b { color: var(--danger); }
+.banner button { border: 0; background: transparent; cursor: pointer; min-width: 44px; min-height: 32px; color: var(--muted); }
+
+.deck {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 20px;
+  display: grid;
+  gap: 18px;
+}
+.eyebrow {
+  font-stretch: 118%;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.lamp {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--track);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.lamp.on { background: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.lamp.bad { background: var(--danger); box-shadow: none; }
+.status h1 {
+  margin: 6px 0 4px;
+  font-size: clamp(26px, 6.4vw, 34px);
+  line-height: 1.1;
+  font-weight: 700;
+  font-stretch: 92%;
+  text-wrap: balance;
+}
+.status h1 .count { font-family: var(--mono); font-weight: 500; font-stretch: 100%; }
+.status p { margin: 0; color: var(--muted); font-size: 15px; max-width: 42ch; }
+
+.meter { display: grid; gap: 6px; }
+.meter-head { display: flex; justify-content: space-between; align-items: baseline; }
+.readout { font-family: var(--mono); font-size: 14px; font-variant-numeric: tabular-nums; }
+.meter-track {
+  position: relative;
+  height: 14px;
+  border-radius: 4px;
+  background: var(--track);
+  overflow: hidden;
+}
+.meter-fill {
+  position: absolute; inset: 0 auto 0 0;
+  width: 0%;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 55%, var(--track)), var(--accent));
+  transition: width 120ms linear;
+}
+.meter-mark {
+  position: absolute; top: -3px; bottom: -3px; width: 2px;
+  background: var(--ink); opacity: 0.55;
+}
+.meter-scale {
+  position: relative;
+  height: 30px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--muted);
+}
+.meter-scale span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+.meter-scale span.edge-l { transform: none; }
+.meter-scale span.edge-r { transform: translateX(-100%); }
+.meter-scale .thresh { top: 14px; color: var(--ink); font-family: var(--display); font-size: 11px; }
+
+.transport { display: grid; gap: 12px; }
+.play {
+  min-height: 56px;
+  border-radius: 14px;
+  border: 0;
+  cursor: pointer;
+  font-stretch: 112%;
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: var(--ink);
+  color: var(--panel);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.play.stop { background: var(--accent); color: var(--accent-ink); }
+.play svg { width: 16px; height: 16px; fill: currentColor; }
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 44px;
+}
+.row label { font-weight: 600; }
+.row .hint { display: block; font-weight: 400; color: var(--muted); font-size: 13px; }
+
+.switch { position: relative; width: 52px; height: 30px; flex: none; }
+.switch input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.switch span {
+  position: absolute; inset: 0; border-radius: 999px;
+  background: var(--track); box-shadow: inset 0 0 0 1px var(--line);
+  transition: background 150ms;
+  pointer-events: none;
+}
+.switch span::after {
+  content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px;
+  border-radius: 50%; background: var(--panel); box-shadow: 0 1px 2px rgb(0 0 0 / 25%);
+  transition: transform 150ms;
+}
+.switch input:checked + span { background: var(--ink); }
+.switch input:checked + span::after { transform: translateX(22px); }
+.switch input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+.speakers { display: grid; gap: 10px; }
+.speakers-head { display: flex; align-items: baseline; justify-content: space-between; padding-inline: 4px; }
+.speakers-head h2 { margin: 0; font-size: 13px; font-stretch: 118%; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 600; }
+.speakers-head span { font-size: 13px; color: var(--muted); }
+
+.spk {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: grid;
+  gap: 8px;
+}
+.spk.on { border-color: color-mix(in srgb, var(--accent) 60%, var(--line)); }
+.spk-top { display: flex; align-items: center; gap: 10px; }
+.spk-name { flex: 1; min-width: 0; }
+.spk-name b { display: block; font-size: 16px; overflow-wrap: anywhere; }
+.spk-name small { color: var(--muted); font-size: 12.5px; }
+.star {
+  width: 44px; height: 44px; border-radius: 10px; border: 0; background: transparent; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; color: var(--muted);
+}
+.star svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+.star[aria-pressed="true"] { color: var(--accent); }
+.star[aria-pressed="true"] svg { fill: currentColor; }
+.vol { display: flex; align-items: center; gap: 12px; }
+.vol input[type="range"] { flex: 1; accent-color: var(--ink); min-height: 32px; }
+.vol output { font-family: var(--mono); font-size: 13px; width: 3ch; text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+.spk.off .vol { opacity: 0.55; }
+
+.pin {
+  display: grid;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--warn-soft);
+}
+.pin p { margin: 0; font-size: 14px; }
+.pin form { display: flex; gap: 8px; }
+.pin input {
+  width: 7.5ch; min-height: 44px; text-align: center; letter-spacing: 0.3em;
+  font-family: var(--mono); font-size: 18px;
+  border: 1px solid var(--line); border-radius: 10px; background: var(--panel);
+}
+.pin button { min-height: 44px; border-radius: 10px; border: 0; background: var(--ink); color: var(--panel); padding-inline: 16px; cursor: pointer; font-weight: 600; }
+
+.spk.missing { background: transparent; border-style: dashed; }
+.spk.missing b { color: var(--muted); }
+
+.notice {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--warn-soft);
+  font-size: 14.5px;
+}
+
+.drawer-scrim {
+  position: fixed; inset: 0; background: rgb(10 12 15 / 45%);
+  display: flex; justify-content: flex-end;
+}
+.drawer {
+  width: min(380px, 100%);
+  height: 100%;
+  background: var(--panel);
+  padding: calc(env(safe-area-inset-top, 0px) + 20px) 20px calc(env(safe-area-inset-bottom, 0px) + 20px);
+  display: grid;
+  align-content: start;
+  gap: 18px;
+  overflow-y: auto;
+}
+.drawer h2 { margin: 0; font-stretch: 112%; font-size: 18px; }
+.drawer .field { display: grid; gap: 6px; }
+.drawer label { font-weight: 600; }
+.drawer select { min-height: 44px; border-radius: 10px; border: 1px solid var(--line); background: var(--ground); padding-inline: 10px; }
+.drawer p { margin: 0; color: var(--muted); font-size: 14px; }
+.drawer dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 14px; }
+.drawer dt { color: var(--muted); }
+.drawer dd { margin: 0; font-family: var(--mono); font-size: 13px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .meter-fill, .switch span, .switch span::after { transition: none; }
+}
+</style>
+
+<div class="mock-bar" role="toolbar" aria-label="Mockup state">
+  <strong>Mockup · show state</strong>
+</div>
+
+<div class="app" id="app"></div>
+<div id="drawerRoot"></div>
+
+<script>
+const SPEAKERS = [
+  { id: "101889459739368", name: "Kitchen", type: "AirPlay 2", selected: true, volume: 55, needs_pin: false, is_default: true },
+  { id: "248561278438948", name: "Elessar", type: "AirPlay 2", selected: true, volume: 40, needs_pin: false, is_default: true },
+  { id: "266176521832340", name: "Living Room", type: "AirPlay 2", selected: false, volume: 50, needs_pin: false, is_default: false, unpaired: true },
+  { id: "139080632609167", name: "Bedroom", type: "AirPlay 2", selected: false, volume: 30, needs_pin: false, is_default: false },
+  { id: "22539161223586", name: "Snoopy", type: "AirPlay 2", selected: false, volume: 50, needs_pin: false, is_default: false },
+  { id: "97125484670639", name: "Apple TV", type: "AirPlay 1", selected: false, volume: 50, needs_pin: false, is_default: false },
+];
+
+const BASE = {
+  state: "playing", auto_on: true, countdown_s: null, level_db: -22.4, stylus_down: true,
+  input: "plughw:1,0", input_available: true,
+  default_speakers: ["101889459739368", "248561278438948", "den-offline"],
+  missing_default_speakers: ["den-offline"],
+  speakers: SPEAKERS, owntone_up: true, error: null,
+};
+
+const SCENES = {
+  playing: { label: "Playing", snap: {} },
+  countdown: { label: "Stopping soon", snap: { countdown_s: 161, level_db: -96.0, stylus_down: false } },
+  waiting: { label: "Waiting", snap: { state: "armed", level_db: -97.5, stylus_down: false, speakers: SPEAKERS.map(s => ({ ...s, selected: false })) } },
+  held: { label: "Held", snap: { state: "held", level_db: -24.8 } },
+  off: { label: "Auto-on off", snap: { state: "off", auto_on: false, level_db: -97.5, stylus_down: false, speakers: SPEAKERS.map(s => ({ ...s, selected: false })) } },
+  noinput: { label: "Turntable unplugged", snap: { state: "armed", input_available: false, level_db: -120, stylus_down: false, speakers: SPEAKERS.map(s => ({ ...s, selected: false })) } },
+  noowntone: { label: "OwnTone down", snap: { owntone_up: false, speakers: [], missing_default_speakers: [] } },
+  error: { label: "Error", snap: { error: "Could not start playback: PUT /api/outputs/set returned HTTP 500" } },
+  settings: { label: "Settings open", snap: {}, drawer: true },
+};
+
+const START_DB = -60, FLOOR_DB = -75, MIN_DB = -90;
+let scene = "playing";
+let snap = { ...BASE };
+let dismissedError = null;
+
+function el(tag, attrs = {}, ...children) {
+  const node = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") node.className = v;
+    else if (k === "text") node.textContent = v;
+    else if (k.startsWith("on")) node.addEventListener(k.slice(2), v);
+    else if (v === true) node.setAttribute(k, "");
+    else if (v !== false && v != null) node.setAttribute(k, v);
+  }
+  for (const c of children.flat()) if (c) node.append(c);
+  return node;
+}
+
+function formatCountdown(seconds) {
+  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+}
+
+function names(ids) {
+  const list = ids.map(id => (snap.speakers.find(s => s.id === id) || {}).name).filter(Boolean);
+  if (list.length <= 2) return list.join(" and ");
+  return `${list.slice(0, -1).join(", ")} and ${list[list.length - 1]}`;
+}
+
+function describe(s) {
+  const playingTo = s.speakers.filter(x => x.selected).map(x => x.id);
+  const defaults = s.default_speakers.filter(id => !s.missing_default_speakers.includes(id));
+  if (!s.owntone_up) return { lamp: "bad", eyebrow: "OwnTone", title: "OwnTone unavailable", body: "Tonearm keeps listening to the turntable and starts playback as soon as OwnTone answers again." };
+  if (!s.input_available) return { lamp: "bad", eyebrow: "Turntable", title: "Turntable not connected", body: "Check the USB cable and that the turntable is switched on." };
+  if (s.state === "playing" && s.countdown_s !== null) return { lamp: "on", eyebrow: "Tonearm up", title: el("span", {}, "Stopping in ", el("span", { class: "count", text: formatCountdown(s.countdown_s) })), body: "Flip the record or drop the needle to keep playing." };
+  if (s.state === "playing") return { lamp: "on", eyebrow: "Needle down", title: "Playing", body: `On ${names(playingTo)}.` };
+  if (s.state === "held") return { lamp: "", eyebrow: "Stopped by you", title: "Held until this record ends", body: "Auto-on comes back 3 minutes after the tonearm lifts. Press Play to resume now." };
+  if (s.state === "off") return { lamp: "", eyebrow: "Auto-on off", title: "Auto-on off", body: "Dropping the needle does nothing. Press Play to start by hand." };
+  return { lamp: "", eyebrow: "Armed", title: "Waiting for a record", body: `Drop the needle to play on ${names(defaults)}.` };
+}
+
+function pct(db) {
+  return Math.max(0, Math.min(100, (db - MIN_DB) / -MIN_DB * 100));
+}
+
+function meter(s) {
+  const scale = el("div", { class: "meter-scale", "aria-hidden": "true" },
+    el("span", { class: "edge-l", style: "left:0", text: "−90" }),
+    el("span", { style: `left:${pct(-40)}%`, text: "−40" }),
+    el("span", { style: `left:${pct(-20)}%`, text: "−20" }),
+    el("span", { class: "edge-r", style: "left:100%", text: "0 dBFS" }),
+    el("span", { class: "thresh edge-r", style: `left:${pct(FLOOR_DB)}%`, text: "arm up" }),
+    el("span", { class: "thresh edge-l", style: `left:${pct(START_DB)}%`, text: "needle down" }),
+  );
+  const level = s.input_available ? `${s.level_db.toFixed(1)} dBFS` : "no signal";
+  return el("div", { class: "meter" },
+    el("div", { class: "meter-head" },
+      el("span", { class: "eyebrow", text: "Input level" }),
+      el("span", { class: "readout", id: "readout", text: level })),
+    el("div", { class: "meter-track", role: "meter", "aria-label": "Input level", "aria-valuemin": MIN_DB, "aria-valuemax": 0, "aria-valuenow": s.level_db },
+      el("div", { class: "meter-fill", id: "meterFill", style: `width:${s.input_available ? pct(s.level_db) : 0}%` }),
+      el("div", { class: "meter-mark", style: `left:${pct(FLOOR_DB)}%` }),
+      el("div", { class: "meter-mark", style: `left:${pct(START_DB)}%` })),
+    scale);
+}
+
+const PLAY_ICON = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 1.5v13l11-6.5z"/></svg>';
+const STOP_ICON = '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" rx="1.5"/></svg>';
+const STAR_ICON = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.2l2.4 5 5.4.6-4 3.7 1.1 5.3L10 14.1l-4.9 2.7 1.1-5.3-4-3.7 5.4-.6z"/></svg>';
+
+function deck(s) {
+  const d = describe(s);
+  const playing = s.state === "playing";
+  const btn = el("button", { class: playing ? "play stop" : "play", type: "button" });
+  btn.innerHTML = playing ? STOP_ICON + "Stop" : PLAY_ICON + "Play";
+  const autoOn = el("input", { type: "checkbox", id: "autoOn", role: "switch" });
+  autoOn.checked = s.auto_on;
+  autoOn.addEventListener("change", () => setScene(autoOn.checked ? "waiting" : "off"));
+  return el("section", { class: "deck", "aria-label": "Turntable" },
+    el("div", { class: "status", "aria-live": "polite" },
+      el("div", { class: "eyebrow" }, el("span", { class: `lamp ${d.lamp}` }), d.eyebrow),
+      el("h1", {}, d.title),
+      el("p", { text: d.body })),
+    meter(s),
+    el("div", { class: "transport" },
+      btn,
+      el("div", { class: "row" },
+        el("label", { for: "autoOn" }, "Auto-on", el("span", { class: "hint", text: "Play when the needle drops" })),
+        el("span", { class: "switch" }, autoOn, el("span")))));
+}
+
+function speakerCard(sp, s) {
+  const toggle = el("input", { type: "checkbox", id: `on-${sp.id}`, role: "switch", "aria-label": `Play on ${sp.name}` });
+  toggle.checked = sp.selected;
+  toggle.addEventListener("change", () => {
+    snap.speakers = snap.speakers.map(x => x.id !== sp.id ? x : {
+      ...x,
+      selected: toggle.checked,
+      needs_pin: toggle.checked && Boolean(x.unpaired),
+    });
+    render();
+  });
+  const star = el("button", { class: "star", type: "button", "aria-pressed": String(sp.is_default), "aria-label": `${sp.name} is a default speaker` });
+  star.innerHTML = STAR_ICON;
+  const vol = el("input", { type: "range", id: `vol-${sp.id}`, min: "0", max: "100", value: String(sp.volume), "aria-label": `${sp.name} volume` });
+  const out = el("output", { for: `vol-${sp.id}`, text: String(sp.volume) });
+  vol.addEventListener("input", () => { out.textContent = vol.value; });
+  const card = el("article", { class: `spk ${sp.selected ? "on" : "off"}` },
+    el("div", { class: "spk-top" },
+      el("div", { class: "spk-name" }, el("b", { text: sp.name }), el("small", { text: sp.type + (sp.is_default ? " · default" : "") })),
+      star,
+      el("span", { class: "switch" }, toggle, el("span"))),
+    el("div", { class: "vol" }, vol, out));
+  if (sp.needs_pin) {
+    card.append(el("div", { class: "pin" },
+      el("p", { text: `${sp.name} is showing a PIN on its screen.` }),
+      el("form", { onsubmit: e => {
+        e.preventDefault();
+        snap.speakers = snap.speakers.map(x => x.id !== sp.id ? x : { ...x, needs_pin: false, unpaired: false });
+        render();
+      } },
+        el("input", { id: `pin-${sp.id}`, inputmode: "numeric", pattern: "[0-9]{4}", maxlength: "4", placeholder: "0000", "aria-label": `PIN for ${sp.name}` }),
+        el("button", { type: "submit", text: "Pair" }))));
+  }
+  return card;
+}
+
+function missingCard(id) {
+  const star = el("button", { class: "star", type: "button", "aria-pressed": "true", "aria-label": "Remove from default speakers" });
+  star.innerHTML = STAR_ICON;
+  return el("article", { class: "spk missing" },
+    el("div", { class: "spk-top" },
+      el("div", { class: "spk-name" }, el("b", { text: "Den" }), el("small", { text: "Default speaker offline" })),
+      star));
+}
+
+function speakers(s) {
+  const on = s.speakers.filter(x => x.selected).length;
+  const list = el("section", { class: "speakers", "aria-label": "Speakers" },
+    el("div", { class: "speakers-head" },
+      el("h2", { text: "Speakers" }),
+      el("span", { text: s.owntone_up ? `${on} of ${s.speakers.length} on · ★ plays on needle drop` : "" })));
+  if (!s.owntone_up) {
+    list.append(el("div", { class: "notice", text: "Speakers appear here when OwnTone is reachable." }));
+    return list;
+  }
+  for (const sp of s.speakers) list.append(speakerCard(sp, s));
+  for (const id of s.missing_default_speakers) list.append(missingCard(id));
+  return list;
+}
+
+function drawer() {
+  const close = () => setScene("playing");
+  const select = el("select", { id: "inputSelect" },
+    el("option", { value: "plughw:0,0", text: "Intel 82801BA-ICH2 (plughw:0,0)" }),
+    el("option", { value: "plughw:1,0", text: "USB AUDIO CODEC (plughw:1,0)", selected: true }));
+  return el("div", { class: "drawer-scrim", onclick: e => { if (e.target === e.currentTarget) close(); } },
+    el("aside", { class: "drawer", role: "dialog", "aria-modal": "true", "aria-label": "Settings" },
+      el("div", { class: "row" },
+        el("h2", { text: "Settings" }),
+        el("button", { class: "icon-btn", type: "button", onclick: close, text: "Close" })),
+      el("div", { class: "field" },
+        el("label", { for: "inputSelect", text: "Turntable input" }),
+        select,
+        el("p", { text: "The USB audio device the turntable is plugged into." })),
+      el("dl", {},
+        el("dt", { text: "Needle down at" }), el("dd", { text: "−60 dBFS" }),
+        el("dt", { text: "Arm up below" }), el("dd", { text: "−75 dBFS" }),
+        el("dt", { text: "Stop after" }), el("dd", { text: "3:00 arm up" })),
+      el("p", { text: "Detection levels and the stop delay are set on the Pi in the service configuration." })));
+}
+
+const GEAR_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.14 12.94a7.07 7.07 0 0 0 .06-.94 7.07 7.07 0 0 0-.06-.94l2.03-1.58a.49.49 0 0 0 .12-.62l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a7 7 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.4h-3.84a.48.48 0 0 0-.48.4l-.36 2.54a7 7 0 0 0-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.71 8.86a.48.48 0 0 0 .12.62l2.03 1.58a7.3 7.3 0 0 0 0 1.88l-2.03 1.58a.49.49 0 0 0-.12.62l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.04.7 1.62.94l.36 2.54c.05.23.24.4.48.4h3.84c.24 0 .44-.17.48-.4l.36-2.54a7 7 0 0 0 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.62zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>';
+
+function settingsButton() {
+  const btn = el("button", { class: "icon-btn gear", type: "button", onclick: () => setScene("settings"), "aria-label": "Settings", title: "Settings" });
+  btn.innerHTML = GEAR_ICON;
+  return btn;
+}
+
+function render() {
+  const s = snap;
+  const app = document.getElementById("app");
+  const parts = [
+    el("header", { class: "brand" },
+      el("div", { class: "wordmark", text: "TONEARM" }),
+      settingsButton()),
+  ];
+  if (s.error && s.error !== dismissedError) {
+    parts.push(el("div", { class: "banner", role: "alert" },
+      el("div", {}, el("b", { text: "Playback problem. " }), s.error),
+      el("button", { type: "button", "aria-label": "Dismiss", text: "✕", onclick: () => { dismissedError = s.error; render(); } })));
+  }
+  parts.push(deck(s), speakers(s));
+  app.replaceChildren(...parts);
+  document.getElementById("drawerRoot").replaceChildren(SCENES[scene].drawer ? drawer() : "");
+}
+
+function setScene(name) {
+  scene = name;
+  dismissedError = null;
+  snap = { ...BASE, ...SCENES[name].snap };
+  for (const b of document.querySelectorAll(".mock-bar button")) b.setAttribute("aria-pressed", String(b.dataset.scene === name));
+  render();
+}
+
+const bar = document.querySelector(".mock-bar");
+for (const [key, { label }] of Object.entries(SCENES)) {
+  bar.append(el("button", { type: "button", "data-scene": key, "aria-pressed": "false", text: label, onclick: () => setScene(key) }));
+}
+setScene("playing");
+
+if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  setInterval(() => {
+    if (!snap.input_available || !snap.stylus_down) return;
+    const next = Math.max(-45, Math.min(-8, snap.level_db + (Math.random() - 0.5) * 6));
+    snap.level_db = next;
+    const fill = document.getElementById("meterFill");
+    const readout = document.getElementById("readout");
+    if (fill) fill.style.width = `${pct(next)}%`;
+    if (readout) readout.textContent = `${next.toFixed(1)} dBFS`;
+  }, 180);
+}
+</script>

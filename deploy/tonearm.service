@@ -1,0 +1,19 @@
+[Unit]
+Description=Tonearm turntable auto-on for OwnTone
+After=network-online.target sound.target owntone.service
+Wants=network-online.target owntone.service
+
+[Service]
+User=@USER@
+WorkingDirectory=/opt/tonearm
+ExecStart=/usr/bin/python3 -m tonearm
+Environment=PYTHONUNBUFFERED=1
+Environment=TONEARM_START_DB=-65
+Environment=TONEARM_FLOOR_DB=-80
+Environment=TONEARM_PORT=80
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
