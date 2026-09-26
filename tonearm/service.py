@@ -59,6 +59,8 @@ class Service:
         self._pending_auto = False
         self._playing_speakers = None
         self._playing_auto = False
+        self._joinable = set()
+        self._declined = set()
         self._checked_leftover_playback = False
         self._last_start_attempt = -math.inf
         self._started_at = -math.inf
@@ -146,6 +148,45 @@ class Service:
             self._last_start_attempt = now
             speakers = self._auto_speakers() if self._pending_auto else self._filter_available(self._pending_start)
             self._spawn(self._start_playback(speakers, retry=True, auto=self._pending_auto))
+        self._join_returning_speakers()
+        self._broadcast()
+
+    def _auto_playback_running(self):
+        return (self.gate.state is State.PLAYING and self._playing_auto
+                and self._pending_start is None and self._playing_speakers is not None)
+
+    def _join_returning_speakers(self):
+        joinable, self._joinable = self._joinable, set()
+        if not self._auto_playback_running():
+            return
+        ids = []
+        for oid in self.settings.default_speakers:
+            presence = self._presence.get(oid)
+            if (oid in joinable and oid not in self._declined and presence is not None
+                    and presence.state == "available"
+                    and not presence.output.selected and not presence.output.needs_pin):
+                ids.append(oid)
+        if ids:
+            self._spawn(self._join_speakers(ids))
+
+    async def _join_speakers(self, ids):
+        async with self._lock:
+            if not self._auto_playback_running():
+                return
+            for oid in ids:
+                name = self._speaker_name(oid)
+                try:
+                    await self.client.update_output(oid, selected=True)
+                except OwnToneError as e:
+                    log.warning("could not add %s to the running playback: %s", name, e)
+                    continue
+                log.info("joined %s to the running playback", name)
+                if oid not in self._playing_speakers:
+                    self._playing_speakers.append(oid)
+            try:
+                await self.refresh_outputs()
+            except OwnToneError as e:
+                log.warning("could not refresh outputs: %s", e)
         self._broadcast()
 
     async def _tick_loop(self):
@@ -161,6 +202,7 @@ class Service:
             if action is Action.START_AUTO:
                 prebuffer = list(self._prebuffer)
                 self._collecting = []
+                self._declined = set()
                 speakers = self._auto_speakers()
                 decided_at = self._clock()
                 log.info("start decided: auto=True speakers=%s gate_state=%s prebuffer_chunks=%d",
@@ -335,6 +377,10 @@ class Service:
             if selected and output is not None and output.needs_pin:
                 raise OwnToneError(f"{output.name} needs pairing: enter the PIN shown on the device") from e
             raise
+        if selected is False:
+            self._declined.add(output_id)
+        elif selected:
+            self._declined.discard(output_id)
         await self.refresh_outputs()
         if pin is not None and self.gate.state is State.PLAYING:
             ids = self._filter_available([o.id for o in self.outputs if o.selected])
@@ -355,6 +401,7 @@ class Service:
                 self._presence[oid] = _Presence(o, state, now)
             elif presence.state == "gone":
                 self._presence[oid] = _Presence(o, "available", now)
+                self._joinable.add(oid)
             else:
                 presence.output = o
         for oid in list(self._presence):
@@ -373,6 +420,7 @@ class Service:
         for oid, presence in list(self._presence.items()):
             if presence.state == "pending" and now - presence.since >= SPEAKER_APPEAR_DELAY_S:
                 presence.state = "available"
+                self._joinable.add(oid)
             elif presence.state == "gone" and now - presence.since >= SPEAKER_GONE_GRACE_S:
                 del self._presence[oid]
 

@@ -882,3 +882,146 @@ async def test_speaker_dropped_at_exactly_grace_boundary(make_service):
     clock.advance(service_module.SPEAKER_GONE_GRACE_S)
     await svc.tick()
     assert not any(s["id"] == "2" for s in svc.snapshot()["speakers"])
+
+
+async def _vanish(svc, client, output_id):
+    gone = next(o for o in client.outputs_list if o.id == output_id)
+    client.outputs_list = [o for o in client.outputs_list if o.id != output_id]
+    await svc.refresh_outputs()
+    return gone
+
+
+async def _reappear(svc, client, output):
+    client.outputs_list.append(output)
+    await svc.refresh_outputs()
+
+
+def _selects(client, output_id):
+    return [c for c in client.calls if c == ("update_output", output_id, {"selected": True})]
+
+
+async def test_starred_speaker_returning_mid_record_joins_auto_playback(make_service, caplog):
+    svc, client, pipe, clock = make_service()
+    await svc.refresh_outputs()
+    den = await _vanish(svc, client, "2")
+    await start_by_needle_drop(svc, clock)
+    assert ("set_outputs", ["1"]) in client.calls
+    await _reappear(svc, client, den)
+    with caplog.at_level(logging.INFO, logger="tonearm.service"):
+        await svc.tick()
+        await svc.drain()
+    assert len(_selects(client, "2")) == 1
+    assert "2" in svc._playing_speakers
+    assert "joined Den" in caplog.text
+    await svc.tick()
+    await svc.drain()
+    assert len(_selects(client, "2")) == 1
+
+
+async def test_new_starred_speaker_joins_after_appear_delay(make_service):
+    svc, client, pipe, clock = make_service(settings=Settings(input="plughw:1,0", default_speakers=["1", "4"]))
+    await svc.refresh_outputs()
+    await start_by_needle_drop(svc, clock)
+    client.outputs_list.append(Output("4", "Patio", "AirPlay 2", False, 50, False))
+    await svc.refresh_outputs()
+    await svc.tick()
+    await svc.drain()
+    assert _selects(client, "4") == []
+    clock.advance(service_module.SPEAKER_APPEAR_DELAY_S)
+    feed(svc, clock, LOUD_CHUNK, 0.1)
+    await svc.tick()
+    await svc.drain()
+    assert len(_selects(client, "4")) == 1
+
+
+async def test_returning_speaker_does_not_join_manual_playback(make_service):
+    svc, client, pipe, clock = make_service()
+    await svc.refresh_outputs()
+    den = await _vanish(svc, client, "2")
+    await svc.play(["1"])
+    await _reappear(svc, client, den)
+    await svc.tick()
+    await svc.drain()
+    assert _selects(client, "2") == []
+
+
+async def test_speaker_turned_off_during_record_is_not_rejoined(make_service):
+    svc, client, pipe, clock = make_service()
+    await svc.refresh_outputs()
+    await start_by_needle_drop(svc, clock)
+    await svc.set_speaker("2", selected=False)
+    den = await _vanish(svc, client, "2")
+    await _reappear(svc, client, den)
+    await svc.tick()
+    await svc.drain()
+    assert _selects(client, "2") == []
+
+
+async def test_turned_off_speaker_can_rejoin_on_the_next_record(make_service):
+    svc, client, pipe, clock = make_service(TONEARM_QUIET_TIMEOUT_S="10")
+    await svc.refresh_outputs()
+    await start_by_needle_drop(svc, clock)
+    await svc.set_speaker("2", selected=False)
+    feed(svc, clock, SILENT_CHUNK, 10.5)
+    await svc.drain()
+    assert svc.gate.state is State.ARMED
+    den = await _vanish(svc, client, "2")
+    await start_by_needle_drop(svc, clock)
+    await _reappear(svc, client, den)
+    await svc.tick()
+    await svc.drain()
+    assert len(_selects(client, "2")) == 1
+
+
+async def test_starred_speaker_needing_pin_does_not_join(make_service):
+    svc, client, pipe, clock = make_service(settings=Settings(input="plughw:1,0", default_speakers=["1", "3"]))
+    await svc.refresh_outputs()
+    living = await _vanish(svc, client, "3")
+    await start_by_needle_drop(svc, clock)
+    await _reappear(svc, client, living)
+    await svc.tick()
+    await svc.drain()
+    assert _selects(client, "3") == []
+
+
+async def test_unstarred_speaker_returning_does_not_join(make_service):
+    svc, client, pipe, clock = make_service(settings=Settings(input="plughw:1,0", default_speakers=["1"]))
+    await svc.refresh_outputs()
+    den = await _vanish(svc, client, "2")
+    await start_by_needle_drop(svc, clock)
+    await _reappear(svc, client, den)
+    await svc.tick()
+    await svc.drain()
+    assert _selects(client, "2") == []
+
+
+async def test_speaker_returning_while_not_playing_does_nothing(make_service):
+    svc, client, pipe, clock = make_service()
+    await svc.refresh_outputs()
+    den = await _vanish(svc, client, "2")
+    await _reappear(svc, client, den)
+    await svc.tick()
+    await svc.drain()
+    await start_by_needle_drop(svc, clock)
+    await svc.tick()
+    await svc.drain()
+    assert _selects(client, "2") == []
+
+
+async def test_join_failure_is_logged_and_playback_continues(make_service, caplog):
+    svc, client, pipe, clock = make_service()
+    await svc.refresh_outputs()
+    den = await _vanish(svc, client, "2")
+    await start_by_needle_drop(svc, clock)
+    await _reappear(svc, client, den)
+
+    async def reject(output_id, *, selected=None, volume=None, pin=None):
+        raise OwnToneError(f"PUT /api/outputs/{output_id} returned HTTP 400")
+
+    client.update_output = reject
+    with caplog.at_level(logging.WARNING, logger="tonearm.service"):
+        await svc.tick()
+        await svc.drain()
+    assert "could not add Den" in caplog.text
+    assert svc.gate.state is State.PLAYING
+    assert pipe.is_open

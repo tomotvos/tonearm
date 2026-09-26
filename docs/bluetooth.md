@@ -1,4 +1,4 @@
-# Bluetooth speakers — design (not yet implemented)
+# Bluetooth speakers — design (Part 1 not yet implemented)
 
 ## Goal
 
@@ -24,11 +24,11 @@ Target: Raspberry Pi OS trixie on the Pi, not the Parallels VM, where Bluetooth 
 4. **OwnTone config:** check that the `pulseaudio` output section is enabled and that the speaker appears in `GET /api/outputs` (type `pulseaudio`).
 5. **Installer:** add an opt-in step (for example `deploy/install.sh <user> --bluetooth`) that installs the packages and configures the system audio server. Pairing stays manual and gets a documented README section, since it needs the speaker in pairing mode.
 
-## Part 2: Tonearm change — starred speakers join mid-record
+## Part 2: Tonearm change — starred speakers join mid-record (implemented)
 
-Today a starred speaker only matters at the needle drop. The one exception is "no starred speaker available", which retries.
+Implemented in `service.py` (`_join_returning_speakers`) and covered by unit tests. It has not been exercised on real speakers yet.
 
-Change: while the gate is PLAYING an **auto** start, when a speaker in the default set becomes available (it passes the 10 s appear delay, or returns from grace), select it in OwnTone (`PUT /api/outputs/{id}` `{"selected": true}`) so it joins the running playback.
+Behaviour: while the gate is PLAYING an **auto** start, when a speaker in the default set becomes available (it passes the 10 s appear delay, or returns from grace), select it in OwnTone (`PUT /api/outputs/{id}` `{"selected": true}`) so it joins the running playback.
 
 - It never starts playback on its own; the needle still decides that.
 - It does not apply to manual Play, which uses the user's explicit selection.

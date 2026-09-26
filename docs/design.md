@@ -74,6 +74,7 @@ Rules:
 - Switching auto-on off never stops current playback. It only changes where PLAYING and HELD end up.
 - Auto-start uses the default speaker set. Manual Play uses the current selection, falling back to the default set. Changing speakers during playback applies immediately and does not change the default set.
 - If no default speaker is available when the needle drops, the start is retried every 5 s until one is, or until the gate leaves PLAYING.
+- A default speaker that becomes available during a needle-drop playback (it comes back within its grace period, or passes the appear delay) joins the running playback. This never starts playback, never applies to manual Play, skips speakers that need a PIN, and never re-adds a speaker the user turned off during the current record.
 - State and the remaining countdown are exposed to the API and UI.
 
 ## Data flow and OwnTone interaction
