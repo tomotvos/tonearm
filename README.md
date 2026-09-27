@@ -1,4 +1,4 @@
-# Tonearm
+<img src="docs/ux/wordmark.svg" alt="Tonearm" width="317">
 
 Drop the needle and your record plays on your AirPlay speakers. Lift the arm, or let the side end, and the speakers are released.
 
@@ -155,6 +155,7 @@ The UI is plain HTML, CSS and JavaScript in `web/`, with no build step.
 | `deploy/` | Installer and systemd unit |
 | `docs/design.md` | Design: detection, state machine, OwnTone interaction |
 | `docs/ux/mockup.html` | Original UI mockup |
+| `docs/ux/wordmark.svg` | README wordmark, generated from the Yellowtail typeface |
 
 ## Credits
 

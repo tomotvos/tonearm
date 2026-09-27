@@ -1,72 +1,57 @@
 <title>Tonearm Panel</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
+@font-face {
+  font-family: "Yellowtail";
+  src: url("../../web/fonts/yellowtail-latin.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Oswald";
+  src: url("../../web/fonts/oswald-latin.woff2") format("woff2");
+  font-weight: 500 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Karla";
+  src: url("../../web/fonts/karla-latin.woff2") format("woff2");
+  font-weight: 400 700;
+  font-display: swap;
+}
+
 :root {
-  --ground: #eceef0;
-  --panel: #f8f9fa;
-  --ink: #1a1e23;
-  --muted: #5e6772;
-  --line: #cdd2d8;
-  --track: #dde1e5;
-  --accent: #c98612;
-  --accent-ink: #1a1e23;
-  --accent-soft: #f6e7c8;
-  --ok: #2f7d55;
-  --danger: #b73a28;
-  --danger-soft: #f7e0db;
-  --warn-soft: #efe6d6;
+  color-scheme: light;
+  --cream: #f6eedc;
+  --paper: #fffaf0;
+  --navy: #1b2a4a;
+  --cherry: #c8102e;
+  --cherry-deep: #7d0a1c;
+  --gold: #e8b33b;
+  --gold-soft: #f6d27a;
+  --ink-soft: #45516b;
+  --muted: #5f6880;
+  --line-soft: #8b93a8;
+  --track: #e9dfc8;
+  --warn-soft: #f7e7c4;
+  --danger-soft: #f7dcd6;
   --focus: #2c6bd6;
-  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
-  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-    --ground: #121519;
-    --panel: #1b1f24;
-    --ink: #e7eaee;
-    --muted: #97a0ab;
-    --line: #2e343b;
-    --track: #2a3037;
-    --accent: #f0b03a;
-    --accent-ink: #15181c;
-    --accent-soft: #3a2f18;
-    --ok: #5cc28c;
-    --danger: #f07a66;
-    --danger-soft: #3b211d;
-    --warn-soft: #2f2a20;
-    --focus: #7aa7ff;
-  }
-}
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --ground: #121519;
-  --panel: #1b1f24;
-  --ink: #e7eaee;
-  --muted: #97a0ab;
-  --line: #2e343b;
-  --track: #2a3037;
-  --accent: #f0b03a;
-  --accent-ink: #15181c;
-  --accent-soft: #3a2f18;
-  --ok: #5cc28c;
-  --danger: #f07a66;
-  --danger-soft: #3b211d;
-  --warn-soft: #2f2a20;
-  --focus: #7aa7ff;
+  --script: "Yellowtail", "Brush Script MT", cursive;
+  --display: "Oswald", "Arial Narrow", sans-serif;
+  --body: "Karla", "Helvetica Neue", Helvetica, sans-serif;
 }
 
 * { box-sizing: border-box; }
+html { background: var(--cream); }
 body {
-  background: var(--ground);
-  color: var(--ink);
-  font-family: var(--display);
+  margin: 0;
+  background: var(--cream);
+  color: var(--navy);
+  font-family: var(--body);
   font-size: 16px;
   line-height: 1.45;
   padding-inline: 16px;
-  padding-block: 12px 40px;
+  padding-block: 16px 40px;
+  overflow-x: clip;
 }
 button, input, select { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
@@ -78,25 +63,29 @@ button, input, select { font: inherit; color: inherit; }
   flex-wrap: wrap;
   gap: 6px;
   align-items: center;
-  font-size: 13px;
+  font-family: var(--display);
+  font-size: 12px;
   color: var(--muted);
 }
 .mock-bar strong {
-  font-stretch: 112%;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.15em;
   font-size: 11px;
   margin-right: 4px;
+  color: var(--cherry);
 }
 .mock-bar button {
-  border: 1px dashed var(--line);
-  background: transparent;
+  border: 1px dashed var(--line-soft);
+  background: var(--paper);
   border-radius: 999px;
   padding: 4px 10px;
   cursor: pointer;
-  font-size: 13px;
+  font-family: var(--display);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
 }
-.mock-bar button[aria-pressed="true"] { border-style: solid; border-color: var(--ink); color: var(--ink); }
+.mock-bar button[aria-pressed="true"] { border-style: solid; border-color: var(--cherry); background: var(--warn-soft); color: var(--cherry); }
 
 .app {
   max-width: 560px;
@@ -106,34 +95,59 @@ button, input, select { font: inherit; color: inherit; }
 }
 
 header.brand {
+  margin-inline: calc(50% - 50vw);
+  padding: calc(env(safe-area-inset-top, 0px) + 18px) max(20px, calc(50vw - 270px)) 20px;
+  background: var(--cherry);
+  border-bottom: 6px solid var(--gold);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
 }
-.wordmark {
-  font-stretch: 125%;
-  font-weight: 800;
-  font-size: 20px;
-  letter-spacing: 0.02em;
+.wordmark { display: grid; }
+.wordmark .name {
+  font-family: var(--script);
+  font-size: 52px;
+  line-height: 1;
+  color: var(--paper);
+  text-shadow: 3px 3px 0 var(--navy);
 }
+.wordmark .tagline {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--gold-soft);
+  padding-left: 6px;
+}
+
 .icon-btn {
   min-width: 44px;
   min-height: 44px;
-  border: 1px solid var(--line);
-  background: var(--panel);
-  border-radius: 12px;
+  border: 2px solid var(--navy);
+  background: var(--paper);
+  border-radius: 999px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding-inline: 12px;
+  padding-inline: 14px;
+  font-family: var(--display);
+  font-weight: 500;
+  letter-spacing: 0.08em;
   font-size: 14px;
 }
-
-.icon-btn.gear { padding-inline: 0; width: 44px; color: var(--muted); }
+.icon-btn.gear {
+  flex: none;
+  padding-inline: 0;
+  width: 44px;
+  border-color: var(--paper);
+  background: transparent;
+  color: var(--paper);
+}
 .icon-btn.gear svg { width: 22px; height: 22px; fill: currentColor; }
-.icon-btn.gear:hover { color: var(--ink); }
+.icon-btn.gear:hover { background: var(--cherry-deep); }
 
 .banner {
   display: flex;
@@ -143,101 +157,102 @@ header.brand {
   padding: 12px 14px;
   border-radius: 12px;
   background: var(--danger-soft);
-  color: var(--ink);
-  border: 1px solid color-mix(in srgb, var(--danger) 35%, transparent);
+  border: 2px solid var(--cherry);
   font-size: 15px;
 }
-.banner b { color: var(--danger); }
+.banner b { color: var(--cherry); font-family: var(--display); letter-spacing: 0.06em; }
 .banner button { border: 0; background: transparent; cursor: pointer; min-width: 44px; min-height: 32px; color: var(--muted); }
 
 .deck {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 18px;
+  background: var(--paper);
+  border: 3px solid var(--navy);
+  border-radius: 16px;
+  box-shadow: 5px 5px 0 var(--navy);
   padding: 20px;
   display: grid;
   gap: 18px;
 }
 .eyebrow {
-  font-stretch: 118%;
+  font-family: var(--display);
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--muted);
+  letter-spacing: 0.2em;
+  font-size: 12px;
+  color: var(--cherry);
   display: flex;
   align-items: center;
   gap: 8px;
 }
 .lamp {
-  width: 9px; height: 9px; border-radius: 50%;
+  width: 10px; height: 10px; border-radius: 50%;
   background: var(--track);
-  box-shadow: inset 0 0 0 1px var(--line);
+  box-shadow: inset 0 0 0 1px var(--line-soft);
 }
-.lamp.on { background: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-.lamp.bad { background: var(--danger); box-shadow: none; }
+.lamp.on { background: var(--cherry); box-shadow: 0 0 0 3px var(--gold-soft); }
+.lamp.bad { background: var(--navy); box-shadow: none; }
 .status h1 {
   margin: 6px 0 4px;
-  font-size: clamp(26px, 6.4vw, 34px);
-  line-height: 1.1;
+  font-family: var(--display);
   font-weight: 700;
-  font-stretch: 92%;
+  font-size: clamp(26px, 7.4vw, 34px);
+  line-height: 1.05;
+  text-transform: uppercase;
   text-wrap: balance;
 }
-.status h1 .count { font-family: var(--mono); font-weight: 500; font-stretch: 100%; }
-.status p { margin: 0; color: var(--muted); font-size: 15px; max-width: 42ch; }
+.status p { margin: 0; color: var(--ink-soft); font-size: 15px; max-width: 42ch; }
 
 .meter { display: grid; gap: 6px; }
 .meter-head { display: flex; justify-content: space-between; align-items: baseline; }
-.readout { font-family: var(--mono); font-size: 14px; font-variant-numeric: tabular-nums; }
+.meter-head .eyebrow { color: var(--navy); }
+.readout { font-family: var(--display); font-size: 14px; letter-spacing: 0.06em; font-variant-numeric: tabular-nums; }
 .meter-track {
   position: relative;
-  height: 14px;
-  border-radius: 4px;
+  height: 16px;
+  border-radius: 8px;
+  border: 2px solid var(--navy);
   background: var(--track);
   overflow: hidden;
 }
 .meter-fill {
   position: absolute; inset: 0 auto 0 0;
   width: 0%;
-  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 55%, var(--track)), var(--accent));
+  background: repeating-linear-gradient(90deg, var(--cherry) 0 10px, var(--gold) 10px 14px);
   transition: width 120ms linear;
-}
-.meter-mark {
-  position: absolute; top: -3px; bottom: -3px; width: 2px;
-  background: var(--ink); opacity: 0.55;
 }
 .meter-scale {
   position: relative;
-  height: 30px;
-  font-family: var(--mono);
-  font-size: 10.5px;
+  height: 20px;
+  font-family: var(--display);
+  font-size: 11px;
+  letter-spacing: 0.04em;
   color: var(--muted);
 }
 .meter-scale span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
 .meter-scale span.edge-l { transform: none; }
 .meter-scale span.edge-r { transform: translateX(-100%); }
-.meter-scale .thresh { top: 14px; color: var(--ink); font-family: var(--display); font-size: 11px; }
 
-.transport { display: grid; gap: 12px; }
+.transport { display: grid; gap: 14px; }
 .play {
   min-height: 56px;
-  border-radius: 14px;
+  border-radius: 999px;
   border: 0;
   cursor: pointer;
-  font-stretch: 112%;
+  font-family: var(--display);
   font-weight: 700;
-  font-size: 17px;
-  letter-spacing: 0.04em;
+  font-size: 20px;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  background: var(--ink);
-  color: var(--panel);
+  background: var(--navy);
+  color: var(--paper);
+  box-shadow: 0 4px 0 #0c1426;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
 }
-.play.stop { background: var(--accent); color: var(--accent-ink); }
+.play.stop { background: var(--cherry); box-shadow: 0 4px 0 var(--cherry-deep); }
+.play:active { transform: translateY(2px); box-shadow: 0 2px 0 #0c1426; }
+.play.stop:active { box-shadow: 0 2px 0 var(--cherry-deep); }
 .play svg { width: 16px; height: 16px; fill: currentColor; }
 
 .row {
@@ -247,54 +262,67 @@ header.brand {
   gap: 12px;
   min-height: 44px;
 }
-.row label { font-weight: 600; }
+.row label { font-weight: 700; }
 .row .hint { display: block; font-weight: 400; color: var(--muted); font-size: 13px; }
 
 .switch { position: relative; width: 52px; height: 30px; flex: none; }
-.switch input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.switch input {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  opacity: 0; margin: 0; cursor: pointer;
+  -webkit-appearance: none; appearance: none;
+}
 .switch span {
   position: absolute; inset: 0; border-radius: 999px;
-  background: var(--track); box-shadow: inset 0 0 0 1px var(--line);
+  background: var(--track); box-shadow: inset 0 0 0 2px var(--navy);
   transition: background 150ms;
   pointer-events: none;
 }
 .switch span::after {
-  content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px;
-  border-radius: 50%; background: var(--panel); box-shadow: 0 1px 2px rgb(0 0 0 / 25%);
+  content: ""; position: absolute; top: 4px; left: 4px; width: 22px; height: 22px;
+  border-radius: 50%; background: var(--paper); box-shadow: 0 0 0 2px var(--navy);
   transition: transform 150ms;
 }
-.switch input:checked + span { background: var(--ink); }
+.switch input:checked + span { background: var(--cherry); }
 .switch input:checked + span::after { transform: translateX(22px); }
+.switch input:disabled + span { opacity: 0.5; }
 .switch input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: 2px; }
 
 .speakers { display: grid; gap: 10px; }
-.speakers-head { display: flex; align-items: baseline; justify-content: space-between; padding-inline: 4px; }
-.speakers-head h2 { margin: 0; font-size: 13px; font-stretch: 118%; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 600; }
-.speakers-head span { font-size: 13px; color: var(--muted); }
+.speakers-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-inline: 4px; }
+.speakers-head h2 { margin: 0; white-space: nowrap; font-family: var(--display); font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.2em; }
+.speakers-head span { font-size: 13px; color: var(--muted); text-align: right; }
 
 .spk {
-  background: var(--panel);
-  border: 1px solid var(--line);
+  background: var(--paper);
+  border: 2px solid var(--navy);
   border-radius: 14px;
   padding: 12px 14px;
   display: grid;
   gap: 8px;
 }
-.spk.on { border-color: color-mix(in srgb, var(--accent) 60%, var(--line)); }
 .spk-top { display: flex; align-items: center; gap: 10px; }
+.rank {
+  flex: none;
+  min-width: 30px;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--cherry);
+  font-variant-numeric: tabular-nums;
+}
 .spk-name { flex: 1; min-width: 0; }
-.spk-name b { display: block; font-size: 16px; overflow-wrap: anywhere; }
+.spk-name b { display: block; font-size: 17px; overflow-wrap: anywhere; }
 .spk-name small { color: var(--muted); font-size: 12.5px; }
 .star {
   width: 44px; height: 44px; border-radius: 10px; border: 0; background: transparent; cursor: pointer;
-  display: inline-flex; align-items: center; justify-content: center; color: var(--muted);
+  display: inline-flex; align-items: center; justify-content: center; color: var(--line-soft);
 }
-.star svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; }
-.star[aria-pressed="true"] { color: var(--accent); }
-.star[aria-pressed="true"] svg { fill: currentColor; }
+.star svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+.star[aria-pressed="true"] { color: var(--gold); }
+.star[aria-pressed="true"] svg { fill: currentColor; stroke: #b3831d; }
 .vol { display: flex; align-items: center; gap: 12px; }
-.vol input[type="range"] { flex: 1; accent-color: var(--ink); min-height: 32px; }
-.vol output { font-family: var(--mono); font-size: 13px; width: 3ch; text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+.vol input[type="range"] { flex: 1; accent-color: var(--cherry); min-height: 32px; }
+.vol output { font-family: var(--display); font-size: 14px; width: 3ch; text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
 .spk.off .vol { opacity: 0.55; }
 
 .pin {
@@ -308,13 +336,13 @@ header.brand {
 .pin form { display: flex; gap: 8px; }
 .pin input {
   width: 7.5ch; min-height: 44px; text-align: center; letter-spacing: 0.3em;
-  font-family: var(--mono); font-size: 18px;
-  border: 1px solid var(--line); border-radius: 10px; background: var(--panel);
+  font-family: var(--display); font-size: 20px;
+  border: 2px solid var(--navy); border-radius: 10px; background: var(--paper);
 }
-.pin button { min-height: 44px; border-radius: 10px; border: 0; background: var(--ink); color: var(--panel); padding-inline: 16px; cursor: pointer; font-weight: 600; }
+.pin button { min-height: 44px; border-radius: 999px; border: 0; background: var(--cherry); color: var(--paper); padding-inline: 18px; cursor: pointer; font-family: var(--display); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
 
-.spk.missing { background: transparent; border-style: dashed; }
-.spk.missing b { color: var(--muted); }
+.spk.missing { background: transparent; border-style: dashed; border-color: var(--line-soft); }
+.spk.missing b, .spk.missing .rank { color: var(--line-soft); }
 
 .notice {
   padding: 12px 14px;
@@ -324,27 +352,25 @@ header.brand {
 }
 
 .drawer-scrim {
-  position: fixed; inset: 0; background: rgb(10 12 15 / 45%);
+  position: fixed; inset: 0; background: rgb(27 42 74 / 55%);
   display: flex; justify-content: flex-end;
 }
 .drawer {
   width: min(380px, 100%);
   height: 100%;
-  background: var(--panel);
+  background: var(--paper);
+  border-left: 6px solid var(--cherry);
   padding: calc(env(safe-area-inset-top, 0px) + 20px) 20px calc(env(safe-area-inset-bottom, 0px) + 20px);
   display: grid;
   align-content: start;
   gap: 18px;
   overflow-y: auto;
 }
-.drawer h2 { margin: 0; font-stretch: 112%; font-size: 18px; }
-.drawer .field { display: grid; gap: 6px; }
-.drawer label { font-weight: 600; }
-.drawer select { min-height: 44px; border-radius: 10px; border: 1px solid var(--line); background: var(--ground); padding-inline: 10px; }
+.drawer h2 { margin: 0; font-family: var(--script); font-weight: 400; font-size: 34px; color: var(--cherry); }
+.drawer .field { display: grid; gap: 6px; min-width: 0; }
+.drawer label { font-weight: 700; }
+.drawer select { width: 100%; min-width: 0; min-height: 44px; border-radius: 10px; border: 2px solid var(--navy); background: var(--cream); padding-inline: 10px; }
 .drawer p { margin: 0; color: var(--muted); font-size: 14px; }
-.drawer dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 14px; }
-.drawer dt { color: var(--muted); }
-.drawer dd { margin: 0; font-family: var(--mono); font-size: 13px; }
 
 @media (prefers-reduced-motion: reduce) {
   .meter-fill, .switch span, .switch span::after { transition: none; }
@@ -384,11 +410,12 @@ const SCENES = {
   off: { label: "Auto-on off", snap: { state: "off", auto_on: false, level_db: -97.5, stylus_down: false, speakers: SPEAKERS.map(s => ({ ...s, selected: false })) } },
   noinput: { label: "Turntable unplugged", snap: { state: "armed", input_available: false, level_db: -120, stylus_down: false, speakers: SPEAKERS.map(s => ({ ...s, selected: false })) } },
   noowntone: { label: "OwnTone down", snap: { owntone_up: false, speakers: [], missing_default_speakers: [] } },
+  nospeakers: { label: "No speakers found", snap: { speakers: [], default_speakers: [], missing_default_speakers: [] } },
   error: { label: "Error", snap: { error: "Could not start playback: PUT /api/outputs/set returned HTTP 500" } },
   settings: { label: "Settings open", snap: {}, drawer: true },
 };
 
-const START_DB = -60, FLOOR_DB = -75, MIN_DB = -90;
+const MIN_DB = -90;
 let scene = "playing";
 let snap = { ...BASE };
 let dismissedError = null;
@@ -412,20 +439,33 @@ function formatCountdown(seconds) {
 
 function names(ids) {
   const list = ids.map(id => (snap.speakers.find(s => s.id === id) || {}).name).filter(Boolean);
+  if (list.length === 0) return "";
   if (list.length <= 2) return list.join(" and ");
   return `${list.slice(0, -1).join(", ")} and ${list[list.length - 1]}`;
 }
 
+function statusText(s) {
+  if (!s.owntone_up) return "OwnTone unavailable";
+  if (!s.input_available) return "Turntable not connected";
+  if (s.state === "playing") return s.countdown_s !== null ? `Stopping in ${formatCountdown(s.countdown_s)}` : "Playing";
+  if (s.state === "held") return "Held until this record ends";
+  if (s.state === "off") return "Auto-on off";
+  return "Waiting for a record";
+}
+
 function describe(s) {
-  const playingTo = s.speakers.filter(x => x.selected).map(x => x.id);
+  if (!s.owntone_up) return { lamp: "bad", eyebrow: "OwnTone", body: "Tonearm keeps listening to the turntable and starts playback as soon as OwnTone answers again." };
+  if (!s.input_available) return { lamp: "bad", eyebrow: "Turntable", body: "Check the USB cable and that the turntable is switched on." };
+  if (s.state === "playing" && s.countdown_s !== null) return { lamp: "on", eyebrow: "Tonearm up", body: "Flip the record or drop the needle to keep playing." };
+  if (s.state === "playing") {
+    const to = names(s.speakers.filter(x => x.selected).map(x => x.id));
+    return { lamp: "on", eyebrow: "Now spinning", body: to ? `On ${to}.` : "" };
+  }
+  if (s.state === "held") return { lamp: "", eyebrow: "Stopped by you", body: "Auto-on comes back after the tonearm lifts. Press Play to resume now." };
+  if (s.state === "off") return { lamp: "", eyebrow: "Auto-on off", body: "Dropping the needle does nothing. Press Play to start by hand." };
   const defaults = s.default_speakers.filter(id => !s.missing_default_speakers.includes(id));
-  if (!s.owntone_up) return { lamp: "bad", eyebrow: "OwnTone", title: "OwnTone unavailable", body: "Tonearm keeps listening to the turntable and starts playback as soon as OwnTone answers again." };
-  if (!s.input_available) return { lamp: "bad", eyebrow: "Turntable", title: "Turntable not connected", body: "Check the USB cable and that the turntable is switched on." };
-  if (s.state === "playing" && s.countdown_s !== null) return { lamp: "on", eyebrow: "Tonearm up", title: el("span", {}, "Stopping in ", el("span", { class: "count", text: formatCountdown(s.countdown_s) })), body: "Flip the record or drop the needle to keep playing." };
-  if (s.state === "playing") return { lamp: "on", eyebrow: "Needle down", title: "Playing", body: `On ${names(playingTo)}.` };
-  if (s.state === "held") return { lamp: "", eyebrow: "Stopped by you", title: "Held until this record ends", body: "Auto-on comes back 3 minutes after the tonearm lifts. Press Play to resume now." };
-  if (s.state === "off") return { lamp: "", eyebrow: "Auto-on off", title: "Auto-on off", body: "Dropping the needle does nothing. Press Play to start by hand." };
-  return { lamp: "", eyebrow: "Armed", title: "Waiting for a record", body: `Drop the needle to play on ${names(defaults)}.` };
+  const to = names(defaults);
+  return { lamp: "", eyebrow: "Armed", body: to ? `Drop the needle to play on ${to}.` : "No default speakers — star a speaker to play it when the needle drops." };
 }
 
 function pct(db) {
@@ -437,19 +477,14 @@ function meter(s) {
     el("span", { class: "edge-l", style: "left:0", text: "−90" }),
     el("span", { style: `left:${pct(-40)}%`, text: "−40" }),
     el("span", { style: `left:${pct(-20)}%`, text: "−20" }),
-    el("span", { class: "edge-r", style: "left:100%", text: "0 dBFS" }),
-    el("span", { class: "thresh edge-r", style: `left:${pct(FLOOR_DB)}%`, text: "arm up" }),
-    el("span", { class: "thresh edge-l", style: `left:${pct(START_DB)}%`, text: "needle down" }),
-  );
+    el("span", { class: "edge-r", style: "left:100%", text: "0 dBFS" }));
   const level = s.input_available ? `${s.level_db.toFixed(1)} dBFS` : "no signal";
   return el("div", { class: "meter" },
     el("div", { class: "meter-head" },
       el("span", { class: "eyebrow", text: "Input level" }),
       el("span", { class: "readout", id: "readout", text: level })),
     el("div", { class: "meter-track", role: "meter", "aria-label": "Input level", "aria-valuemin": MIN_DB, "aria-valuemax": 0, "aria-valuenow": s.level_db },
-      el("div", { class: "meter-fill", id: "meterFill", style: `width:${s.input_available ? pct(s.level_db) : 0}%` }),
-      el("div", { class: "meter-mark", style: `left:${pct(FLOOR_DB)}%` }),
-      el("div", { class: "meter-mark", style: `left:${pct(START_DB)}%` })),
+      el("div", { class: "meter-fill", id: "meterFill", style: `width:${s.input_available ? pct(s.level_db) : 0}%` })),
     scale);
 }
 
@@ -468,7 +503,7 @@ function deck(s) {
   return el("section", { class: "deck", "aria-label": "Turntable" },
     el("div", { class: "status", "aria-live": "polite" },
       el("div", { class: "eyebrow" }, el("span", { class: `lamp ${d.lamp}` }), d.eyebrow),
-      el("h1", {}, d.title),
+      el("h1", { text: statusText(s) }),
       el("p", { text: d.body })),
     meter(s),
     el("div", { class: "transport" },
@@ -478,7 +513,17 @@ function deck(s) {
         el("span", { class: "switch" }, autoOn, el("span")))));
 }
 
-function speakerCard(sp, s) {
+function sortedSpeakerIds(speakers) {
+  return speakers
+    .slice()
+    .sort((a, b) => {
+      if (a.is_default !== b.is_default) return a.is_default ? -1 : 1;
+      return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+    })
+    .map(sp => sp.id);
+}
+
+function speakerCard(sp, rank) {
   const toggle = el("input", { type: "checkbox", id: `on-${sp.id}`, role: "switch", "aria-label": `Play on ${sp.name}` });
   toggle.checked = sp.selected;
   toggle.addEventListener("change", () => {
@@ -496,19 +541,20 @@ function speakerCard(sp, s) {
   vol.addEventListener("input", () => { out.textContent = vol.value; });
   const card = el("article", { class: `spk ${sp.selected ? "on" : "off"}` },
     el("div", { class: "spk-top" },
+      el("span", { class: "rank", "aria-hidden": "true", text: `#${rank}` }),
       el("div", { class: "spk-name" }, el("b", { text: sp.name }), el("small", { text: sp.type + (sp.is_default ? " · default" : "") })),
       star,
       el("span", { class: "switch" }, toggle, el("span"))),
     el("div", { class: "vol" }, vol, out));
   if (sp.needs_pin) {
     card.append(el("div", { class: "pin" },
-      el("p", { text: `${sp.name} is showing a PIN on its screen.` }),
+      el("p", { text: "Enter the PIN shown on the device" }),
       el("form", { onsubmit: e => {
         e.preventDefault();
         snap.speakers = snap.speakers.map(x => x.id !== sp.id ? x : { ...x, needs_pin: false, unpaired: false });
         render();
       } },
-        el("input", { id: `pin-${sp.id}`, inputmode: "numeric", pattern: "[0-9]{4}", maxlength: "4", placeholder: "0000", "aria-label": `PIN for ${sp.name}` }),
+        el("input", { id: `pin-${sp.id}`, inputmode: "numeric", pattern: "[0-9]{4}", maxlength: "4", placeholder: "0000", required: true, autocomplete: "one-time-code", "aria-label": `PIN for ${sp.name}` }),
         el("button", { type: "submit", text: "Pair" }))));
   }
   return card;
@@ -519,21 +565,27 @@ function missingCard(id) {
   star.innerHTML = STAR_ICON;
   return el("article", { class: "spk missing" },
     el("div", { class: "spk-top" },
-      el("div", { class: "spk-name" }, el("b", { text: "Den" }), el("small", { text: "Default speaker offline" })),
+      el("div", { class: "spk-name" }, el("b", { text: "Default speaker offline" }), el("small", { text: id })),
       star));
 }
 
 function speakers(s) {
-  const on = s.speakers.filter(x => x.selected).length;
+  const hasSpeakers = s.owntone_up && s.speakers.length > 0;
+  const available = s.speakers.filter(x => x.available !== false);
   const list = el("section", { class: "speakers", "aria-label": "Speakers" },
     el("div", { class: "speakers-head" },
-      el("h2", { text: "Speakers" }),
-      el("span", { text: s.owntone_up ? `${on} of ${s.speakers.length} on · ★ plays on needle drop` : "" })));
+      el("h2", { text: "The Line-up" }),
+      el("span", { text: hasSpeakers ? `${available.filter(x => x.selected).length} of ${available.length} on · ★ plays on needle drop` : "" })));
   if (!s.owntone_up) {
     list.append(el("div", { class: "notice", text: "Speakers appear here when OwnTone is reachable." }));
     return list;
   }
-  for (const sp of s.speakers) list.append(speakerCard(sp, s));
+  if (s.speakers.length === 0) {
+    list.append(el("div", { class: "notice", text: "No speakers found on the network." }));
+    return list;
+  }
+  const byId = new Map(s.speakers.map(sp => [sp.id, sp]));
+  sortedSpeakerIds(s.speakers).forEach((id, i) => list.append(speakerCard(byId.get(id), i + 1)));
   for (const id of s.missing_default_speakers) list.append(missingCard(id));
   return list;
 }
@@ -551,12 +603,7 @@ function drawer() {
       el("div", { class: "field" },
         el("label", { for: "inputSelect", text: "Turntable input" }),
         select,
-        el("p", { text: "The USB audio device the turntable is plugged into." })),
-      el("dl", {},
-        el("dt", { text: "Needle down at" }), el("dd", { text: "−60 dBFS" }),
-        el("dt", { text: "Arm up below" }), el("dd", { text: "−75 dBFS" }),
-        el("dt", { text: "Stop after" }), el("dd", { text: "3:00 arm up" })),
-      el("p", { text: "Detection levels and the stop delay are set on the Pi in the service configuration." })));
+        el("p", { text: "The USB audio device the turntable is plugged into." }))));
 }
 
 const GEAR_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.14 12.94a7.07 7.07 0 0 0 .06-.94 7.07 7.07 0 0 0-.06-.94l2.03-1.58a.49.49 0 0 0 .12-.62l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a7 7 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.4h-3.84a.48.48 0 0 0-.48.4l-.36 2.54a7 7 0 0 0-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.71 8.86a.48.48 0 0 0 .12.62l2.03 1.58a7.3 7.3 0 0 0 0 1.88l-2.03 1.58a.49.49 0 0 0-.12.62l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.04.7 1.62.94l.36 2.54c.05.23.24.4.48.4h3.84c.24 0 .44-.17.48-.4l.36-2.54a7 7 0 0 0 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.62zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>';
@@ -572,12 +619,14 @@ function render() {
   const app = document.getElementById("app");
   const parts = [
     el("header", { class: "brand" },
-      el("div", { class: "wordmark", text: "TONEARM" }),
+      el("div", { class: "wordmark" },
+        el("span", { class: "name", text: "Tonearm" }),
+        el("span", { class: "tagline", text: "★ Top of the pops, every room ★" })),
       settingsButton()),
   ];
   if (s.error && s.error !== dismissedError) {
     parts.push(el("div", { class: "banner", role: "alert" },
-      el("div", {}, el("b", { text: "Playback problem. " }), s.error),
+      el("div", {}, el("b", { text: "Problem. " }), s.error),
       el("button", { type: "button", "aria-label": "Dismiss", text: "✕", onclick: () => { dismissedError = s.error; render(); } })));
   }
   parts.push(deck(s), speakers(s));
