@@ -54,7 +54,7 @@ async def test_auto_start_logs_decision_and_owntone_timeline(make_service, caplo
     decided = [m for m in messages if m.startswith("start decided")]
     assert len(decided) == 1
     assert "auto=True" in decided[0]
-    assert "speakers=['1', '2']" in decided[0]
+    assert "speakers=['1 (1)', '2 (2)']" in decided[0]
     assert "gate_state=playing" in decided[0]
     assert "prebuffer_chunks=" in decided[0]
     assert any(m.startswith("owntone accepted set_outputs after") for m in messages)
@@ -68,7 +68,7 @@ async def test_manual_play_logs_decision(make_service, caplog):
     decided = [r.message for r in caplog.records if r.message.startswith("start decided")]
     assert len(decided) == 1
     assert "auto=False" in decided[0]
-    assert "speakers=['3']" in decided[0]
+    assert "speakers=['3 (3)']" in decided[0]
 
 
 async def test_auto_start_without_default_speakers_reports_error(make_service):

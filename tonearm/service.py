@@ -206,7 +206,7 @@ class Service:
                 speakers = self._auto_speakers()
                 decided_at = self._clock()
                 log.info("start decided: auto=True speakers=%s gate_state=%s prebuffer_chunks=%d",
-                         speakers, self.gate.state.value, len(prebuffer))
+                         self._describe(speakers), self.gate.state.value, len(prebuffer))
                 self._spawn(self._start_playback(speakers, auto=True, prebuffer=prebuffer, decided_at=decided_at))
             elif action is Action.STOP:
                 self._spawn(self._stop_playback())
@@ -322,7 +322,7 @@ class Service:
             self._collecting = []
             decided_at = self._clock()
             log.info("start decided: auto=False speakers=%s gate_state=%s prebuffer_chunks=%d",
-                     speakers, self.gate.state.value, len(prebuffer))
+                     self._describe(speakers), self.gate.state.value, len(prebuffer))
             await self._start_playback(list(speakers), prebuffer=prebuffer, decided_at=decided_at)
 
     async def stop(self):
@@ -370,6 +370,8 @@ class Service:
         try:
             await self.client.update_output(output_id, selected=selected, volume=volume, pin=pin)
         except OwnToneError as e:
+            log.warning("could not update %s (%s) selected=%s volume=%s: %s",
+                        self._speaker_name(output_id), output_id, selected, volume, e)
             await self.refresh_outputs()
             if not self._is_available(output_id):
                 raise self._unavailable_error(output_id) from e
@@ -424,8 +426,26 @@ class Service:
             elif presence.state == "gone" and now - presence.since >= SPEAKER_GONE_GRACE_S:
                 del self._presence[oid]
 
+    def _describe(self, ids):
+        return [f"{self._speaker_name(i)} ({i})" for i in ids]
+
+    def _log_output_changes(self, old, new):
+        old_by_id = {o.id: o for o in old}
+        new_by_id = {o.id: o for o in new}
+        for oid, o in new_by_id.items():
+            prev = old_by_id.get(oid)
+            if prev is None:
+                log.info("speaker appeared: %s (%s) type=%s selected=%s", o.name, oid, o.type, o.selected)
+            elif prev.selected != o.selected:
+                log.info("speaker %s: %s (%s)", "selected" if o.selected else "deselected", o.name, oid)
+        for oid, o in old_by_id.items():
+            if oid not in new_by_id:
+                log.info("speaker gone: %s (%s)", o.name, oid)
+
     async def refresh_outputs(self):
+        previous = self.outputs
         self.outputs = await self.client.outputs()
+        self._log_output_changes(previous, self.outputs)
         self._update_presence(self.outputs)
 
     async def handle_player_change(self):
