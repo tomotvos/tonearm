@@ -338,6 +338,7 @@ header.brand {
 .drawer label { font-weight: 700; }
 .drawer select { width: 100%; min-width: 0; min-height: 44px; border-radius: 10px; border: 2px solid var(--navy); background: var(--cream); padding-inline: 10px; }
 .drawer p { margin: 0; color: var(--muted); font-size: 14px; }
+.drawer a { color: var(--cherry); font-weight: 700; min-height: 44px; display: inline-flex; align-items: center; }
 
 @media (prefers-reduced-motion: reduce) {
   .meter-fill, .switch span, .switch span::after { transition: none; }

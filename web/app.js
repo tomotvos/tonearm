@@ -513,7 +513,10 @@ function buildDrawerSkeleton() {
       el("div", { class: "field" },
         el("label", { for: "inputSelect", text: "Turntable input" }),
         selectEl,
-        el("p", { text: "The USB audio device the turntable is plugged into." }))));
+        el("p", { text: "The USB audio device the turntable is plugged into." })),
+      el("div", { class: "field" },
+        el("a", { href: `${location.protocol}//${location.hostname}:3689/`, target: "_blank", rel: "noopener", text: "OwnTone web interface ↗" }),
+        el("p", { text: "Opens in a new tab. Pair speakers and see OwnTone's own view." }))));
 }
 
 function onDrawerKeydown(e) {
