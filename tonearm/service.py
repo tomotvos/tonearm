@@ -367,6 +367,8 @@ class Service:
     async def set_speaker(self, output_id, *, selected=None, volume=None, pin=None):
         if self._first_contact_done and not self._is_available(output_id):
             raise self._unavailable_error(output_id)
+        log.info("speaker request: %s (%s) selected=%s volume=%s pin=%s",
+                 self._speaker_name(output_id), output_id, selected, volume, "yes" if pin else "no")
         try:
             await self.client.update_output(output_id, selected=selected, volume=volume, pin=pin)
         except OwnToneError as e:
@@ -443,9 +445,9 @@ class Service:
                 log.info("speaker gone: %s (%s)", o.name, oid)
 
     async def refresh_outputs(self):
-        previous = self.outputs
-        self.outputs = await self.client.outputs()
-        self._log_output_changes(previous, self.outputs)
+        fetched = await self.client.outputs()
+        previous, self.outputs = self.outputs, fetched
+        self._log_output_changes(previous, fetched)
         self._update_presence(self.outputs)
 
     async def handle_player_change(self):
